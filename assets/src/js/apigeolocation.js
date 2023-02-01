@@ -80,6 +80,7 @@ let getAthleteGPX = function (id, route) { //id = identifier of the athlete, rou
 
 
 
+
 // let GPX = getAthleteGPX (552, 5); // request geo points for athlete 552 route 5
 // for (let i = 0; i < GPX.length; i++) {console.log("Geolocation " + GPX[i].lon + " " + GPX[i].lat)}
 
