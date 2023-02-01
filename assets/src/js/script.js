@@ -57,9 +57,10 @@ function GetUserLocation() {
     function glSuccess(pos) {
         locCoords= {lat:pos.coords.latitude, lon:pos.coords.longitude}
        // locCoords={lat:43.6532,lon:-79.3832};
+       console.log("loc success");
     }
     function glError() {
-        alert('location error!');
+     console.log("location error");
         locCoords= {lat:43.6532,lon:-79.3832};
     }
     navigator.geolocation.getCurrentPosition(glSuccess, glError);
@@ -69,16 +70,17 @@ function GetUserLocation() {
 // The following will likely be wrapped in a 'general setup' function; keeping it in global scope
 // for simplicity's sake
 
-
-    let map = L.map('map').setView([43.6532, -79.3832], 17);
+// console.log(GetUserLocation());
+objTestUserRecord.lat=GetUserLocation().lat;
+objTestUserRecord.lon=GetUserLocation().lon;
+    let map = L.map('map').setView([objTestUserRecord.lat, objTestUserRecord.lon], 17);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    console.log(GetUserLocation());
-    objTestUserRecord.lat=GetUserLocation().lat;
-    objTestUserRecord.lon=GetUserLocation().lon;
+
+  
     userLocationEl.innerHTML=(`${objTestUserRecord.lat},${objTestUserRecord.lon}`);
     let userMapMarker=L.marker([objTestUserRecord.lat, objTestUserRecord.lon]).addTo(map);
     let userMapRadius=L.circle([objTestUserRecord.lat, objTestUserRecord.lon],{radius: objTestUserRecord.interestRadius, color:'blue', fillColor:'blue', fillOpacity: 0.25}).addTo(map);
