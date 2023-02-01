@@ -1,0 +1,70 @@
+#signup {
+    padding: 8px 16px !important;
+    margin: 5px
+}
+
+#login {
+    padding: 8px 16px !important;
+}
+
+#login:hover {
+    background-color: black !important;
+    color: white !important;
+}
+
+#signup:hover {
+    background-color: black !important;
+    color: white !important;
+}
+
+#connect #home #branding {
+    text-decoration: none !important;
+}
+
+.hero h1 {
+    font-size: 2rem;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 1rem;
+
+}
+
+.hero {
+    height: 80vh;
+    background-image: url('/assets/img/hero-img-bw.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+#title {
+    font-family: 'Bangers', cursive;
+    font-size: 4rem;
+    color: white;
+    text-shadow: 1px 1px 2px black;
+    bottom: 50%;
+    position: absolute;
+}
+
+.map {
+    background-image: url('/assets/img/map-placeholder.png');
+    background-size: cover;
+    background-position: center;
+    height: 500px;
+    width: 100%;
+    margin-top:30px;
+}
+
+.form-control {
+    width: 50% !important;
+    margin: 20px auto !important;
+    display: block;
+}
+
+
+input:focus, select:focus {
+    box-shadow: 0 0 10px black !important;
+    border-color: black !important;
+}
