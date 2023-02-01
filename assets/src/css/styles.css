@@ -31,7 +31,7 @@
 
 .hero {
     height: 80vh;
-    background-image: url('/assets/img/hero-img-bw.png');
+    background-image: url('https://drive.google.com/uc?export=view&id=1Uxr_Us1ge6YUHjfBfdaER8zgeHfWVA8A');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -41,7 +41,7 @@
 
 #title {
     font-family: 'Bangers', cursive;
-    font-size: 4rem;
+    font-size: 6rem;
     color: white;
     text-shadow: 1px 1px 2px black;
     bottom: 50%;
@@ -49,7 +49,6 @@
 }
 
 .map {
-    background-image: url('/assets/img/map-placeholder.png');
     background-size: cover;
     background-position: center;
     height: 500px;
@@ -67,4 +66,16 @@
 input:focus, select:focus {
     box-shadow: 0 0 10px black !important;
     border-color: black !important;
+}
+
+h2 {
+    font-family: 'Bangers', cursive;
+    font-size: 3rem !important;
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+p {
+    font-family: 'Anek Devanagari', sans-serif;
 }
