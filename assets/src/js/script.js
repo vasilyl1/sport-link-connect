@@ -38,53 +38,6 @@ objTestRoute = {
 
 }
 
-function GenerateRoutes(num,origin,map) {
-    // num is the number of routes we are asking to generate
-    // origin is the origin point (lat, lon object) around which the routes will be randomly generated
-
-    // localRouteArray initialised
-    let localRouteArray=[];
-    //
-    for (x=0;x<num;x++) {
-        //initialise a temporary object variable
-      let tmpObj={};
-      //generate random id
-      tmpObj.id=Math.ceil(Math.random()*1000000);
-      //make the individual route, within a certain hardcoded area around the origin point, by adding random distances to the origin
-      tmpObj.polyline=MakeRoute(origin.lat+((Math.random()*0.002)-(Math.random()*0.001)),origin.lon+((Math.random()*0.002)-(Math.random()*0.001)));
-      // randomise activity
-      tmpObj.activity=['cycling','running'][Math.floor(Math.random()*2)];
-      // randomise name
-      tmpObj.owner=['Claire','Ron','Tawnee','Miriam','John','Robert','Ahmed', 'Fumi'][Math.floor(Math.random()*8)];
-      // add the temporary object to the localRouteArray (which this function will return) before iterating the process again
-      localRouteArray.push(tmpObj);
-    }
-
-    function MakeRoute(mrLat,mrLon) {
-        // mrLat and mrLon are coordinates passed by the parent function (line 54),
-        // the randomised origin points of individual routes
-        // initialise temporary array of lat-lon coordinates
-        let rgMrArray=[];
-        // randomise number of nodes (points) to be included in the polygon, between 2 and 5?
-        let numPoints=Math.floor(Math.random()*3)+2;
-        // the starting point for the polygon
-        let oldPoint={lat:mrLat, lon:mrLon}
-        rgMrArray.push(oldPoint); //push initial point to array of coordinates as point zero
-        for (i=0;i<numPoints;i++) {
-            // iterate for the number of points randomised on line 69
-            // offset the coordinates by an arbitrary small amount
-            oldPoint.lat=oldPoint.lat+(Math.random()*0.0001);
-            oldPoint.lon=oldPoint.lon+(Math.random()*0.0001);
-            // push the newly modified oldPoint to the temporary array before iterating again,
-            // with the modified oldPoint as the starting point of the next line/jump
-            rgMrArray.push({lat:oldPoint.lat,lon:oldPoint.lon});
-        }
-        // return the assembled polyline
-        return rgMrArray;
-    }
-    // return the whole object - name, id, polyline, activity, etc.
-return localRouteArray;
-}
 
 function GetUserLocation() {
     // ... we're still working on this. There's some unpleasant scoping error
@@ -131,15 +84,19 @@ console.log("forsomereason"+objTestUserRecord.lat+"  "+objTestUserRecord.lon)
  // make 20 random routes, using the above-defined generator function
     let randomRoutes=GenerateRoutes(20,{lat:43.6532,lon:-79.3832},map);
     console.log(randomRoutes);
+    console.log(randomRoutes.length);
+    console.log(randomRoutes[1]);
+    console.log(randomRoutes[1].polyline.lon);
     let mapActivityLines=[];
     // draw polylines on the actual map
-    for (n=0;n<20;n++) {
+    for (let n=0;n<20;n++) {
         rngDrawTmp=[]; //converting obj lat lon to array lat lon, to suit the requirements
         // of the LeafletAPI
-        for (n2=0;n2<randomRoutes[n].polyline.length;n2++) {
-            rngDrawTmp.push([randomRoutes[n].polyline[n2].lat,randomRoutes[n].polyline[n2].lon]);
-        }
-        console.log(rngDrawTmp);
+        //for (let n2=0;n2<randomRoutes[n].polyline.length;n2++) {
+        //    rngDrawTmp.push([randomRoutes[n].polyline[n2].lat,randomRoutes[n].polyline[n2].lon]);
+        //}
+        rngDrawTmp.push([randomRoutes[n].polyline.lat,randomRoutes[n].polyline.lon]);
+        //console.log(rngDrawTmp);
         let lineColor;
         if (randomRoutes[n].activity==='cycling') {lineColor='yellow';} else {lineColor='red';}
         //  draw route objects on the map
@@ -158,6 +115,6 @@ function formSubmitHandler(event) {
 
 
 
-
+console.log (GeoByAddress("Museumplein+6+amsterdam")); // returns object {lat,lon} for the address provided as a string, string is to be utf8 url encoded
 
 userFormEl.addEventListener('submit', formSubmitHandler);
