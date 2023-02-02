@@ -6,3 +6,7 @@ let stravaSecret = {
 
     // API key changed 
 }
+
+let geonames = { 
+    key: "vlikhovaido"
+}
