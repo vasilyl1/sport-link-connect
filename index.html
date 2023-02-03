@@ -50,16 +50,16 @@
                <!-- The form to capture the user's email and password -->
                <form class="mb-4">
                     <div class="mb-4">
-                         <label class="block text-gray-700 font-medium mb-2" for="email">
+                         <label class="block text-gray-700 font-medium mb-2" for="email-login">
                               email
                          </label>
-                         <input id="email" class="w-full border border-gray-400 p-2" type="text">
+                         <input id="email-login" class="w-full border border-gray-400 p-2" type="text">
                     </div>
                     <div class="mb-4">
-                         <label class="block text-gray-700 font-medium mb-2" for="password">
+                         <label class="block text-gray-700 font-medium mb-2" for="password-login">
                               password
                          </label>
-                         <input id="password" class="w-full border border-gray-400 p-2" type="password">
+                         <input id="password-login" class="w-full border border-gray-400 p-2" type="password">
                     </div>
                     <button id="loginSubmit" class="bg-black text-white font-medium py-2 px-4 rounded-full">
                          Submit
@@ -89,13 +89,13 @@
                          <label class="block text-gray-700 font-medium mb-2" for="email">
                               email
                          </label>
-                         <input id="email" class="w-full border border-gray-400 p-2" type="text">
+                         <input id="email-signup" class="w-full border border-gray-400 p-2" type="text">
                     </div>
                     <div class="mb-4">
                          <label class="block text-gray-700 font-medium mb-2" for="password">
                               password
                          </label>
-                         <input id="password" class="w-full border border-gray-400 p-2" type="password">
+                         <input id="password-signup" class="w-full border border-gray-400 p-2" type="password">
                     </div>
                     <button id="signupSubmit" class="bg-black text-white font-medium py-2 px-4 rounded-full">
                          Submit
@@ -130,7 +130,7 @@
                document.getElementById("loginModal").classList.add("hidden");
                document.getElementById("loginModal-background").classList.remove("opacity-75");
                document.getElementById("loginModal-background").classList.add("hidden");
-               ducument.getElementById("map").classList.remove("hidden");
+               document.getElementById("map").classList.remove("hidden");
           }
 
           function showSignupModal() {
@@ -144,7 +144,7 @@
                document.getElementById("signupModal").classList.add("hidden");
                document.getElementById("signupModal-background").classList.remove("opacity-75");
                document.getElementById("signupModal-background").classList.add("hidden");
-               ducument.getElementById("map").classList.remove("hidden");
+               document.getElementById("map").classList.remove("hidden");
           }
      </script>
 
@@ -162,12 +162,12 @@
                it so you'll never have to train without your community again! Simply add your information, click submit
                and match with athletes near you! Happy training!! </p>
           <!-- Input section for users location and activity type -->
-          <form>
+          <form id="form-area">
                <div class="form-group">
                     <input class="form-control" type="text" placeholder="Your Location">
                </div>
                <div class="form-group">
-                    <select class="form-control">
+                    <select id="activity-dropdown" class="form-control">
                          <option>Your Activity</option>
                          <option>Running</option>
                          <option>Cycling</option>
@@ -197,26 +197,6 @@
      <footer class="bg-black text-white py-4">
           <p class="text-center">© 2023 SportLink Connect</p>
      </footer>
-
-
-
-
-
-     <!-- CRUDE PLACEHOLDERS FOLLOW - DELETE ACCORDINGLY AND REASSIGN ELEMENT IDS TO DESIRED ELEMENTS -->
-     <div>
-          <form id="form-area">
-               <input type="text" name="name-textfield" value="Veronique">
-               <label for="name-textfield">Name</label><br>
-               <input type="text" name="radiusfield" value="2">
-               <label for="name-textfield">Radius of Concern</label><br>
-               <button type="submit" id="name-submitBtn">Find Fitness Partners</button>
-          </form>
-     </div>
-     <div>You appear to be at: <span id="user-coords"></span></div>
-     <ul id="location-list"></ul>
-     <div id="map" style="width: 600px; height: 400px; position: relative; outline: none;"></div>
-     =======
-
 
 
 </body>
