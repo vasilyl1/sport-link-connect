@@ -62,9 +62,9 @@ fetch("https://jsonplaceholder.typicode.com/posts", {
 
 */
 
-let geonames = {
+/*let geonames = {
     key: "vlikhovaido"
-}
+} */
 
 
 let getAthleteGPX = function (id, route) { //id = identifier of the athlete, route = identifier of the route

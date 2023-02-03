@@ -148,11 +148,15 @@ function init() {
             for (let i = 0; i < 1000; i++) {
                 for (let j = 0; j < num; j++) {
                 if (distance[j] === (Math.abs(origin.lat - json.geonames[i].lat) + Math.abs(origin.lon-json.geonames[i].lng))) {
-                    routes.push({lat: json.geonames[i].lat, lon:json.geonames[i].lng, name: json.geonames[i].name, province: json.geonames[i].adminName1, country: json.geonames[i].countryName });
+                    routes.push({lat: json.geonames[i].lat, lon:json.geonames[i].lng, name: json.geonames[i].name, 
+                     province: json.geonames[i].adminName1, country: json.geonames[i].countryName, id: json.geonames[i].geonameId, class: json.geonames[i].fclName });
                 };
             };
     
            };
+        //
+
+           
            /*
            routeLoc.lat = json.geonames[j].lat;
            routeLoc.lon = json.geonames[j].lng;
