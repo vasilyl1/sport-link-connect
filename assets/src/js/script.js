@@ -88,6 +88,7 @@ function init() {
            console.log('code advanced');
            console.log('outside of it'+x.lat+" "+x.lon);
            objTempUser.knownAddresses.push(x); //change this to GetAddressFromStreet function
+
            objTempUser.knownLocs.push(x);
            objCurrentUser = objTempUser;
            UpdateUserList(objCurrentUser);
@@ -114,7 +115,7 @@ function init() {
        }
    
    
-       let GenerateRoutes = function(num,origin,map) {
+       let GenerateRoutes = function(num,origin) {
            // num is the number of routes we are asking to generate
            // origin is the origin point (lat, lon object) around which the routes will be generated
        
@@ -131,7 +132,7 @@ function init() {
               // geo location for trail
               let distance = [];
               for (let j=0; j < 1000; j++) { // get the distance criteria for each point
-               // distance criteria is calculated as the minimum of sum of square difference of geo coordinates
+               // distance criteria is calculated as the minimum of sum of absolute difference of geo coordinates
                distance.push(Math.abs(origin.lat - json.geonames[j].lat) + Math.abs(origin.lon - json.geonames[j].lng));
               }
               distance = distance.slice(1);
@@ -141,19 +142,12 @@ function init() {
                for (let i = 0; i < 1000; i++) {
                    for (let j = 0; j < num; j++) {
                    if (distance[j] === (Math.abs(origin.lat - json.geonames[i].lat) + Math.abs(origin.lon-json.geonames[i].lng))) {
-                       routes.push({lat: json.geonames[i].lat, lon:json.geonames[i].lng, name: json.geonames[i].name, province: json.geonames[i].adminName1, country: json.geonames[i].countryName });
+                       routes.push({lat: json.geonames[i].lat, lon:json.geonames[i].lng, name: json.geonames[i].name, 
+                        province: json.geonames[i].adminName1, country: json.geonames[i].countryName, id: json.geonames[i].geonameId, class: json.geonames[i].fclName });
                    };
                };
        
               };
-              /*
-              routeLoc.lat = json.geonames[j].lat;
-              routeLoc.lon = json.geonames[j].lng;
-              routeLoc.name = json.geonames[j].name; // park name
-              routeLoc.province = json.geonames[j].adminName1; // province
-              routeLoc.country = json.geonames[j].countryName; // country
-              */
-           
            //
            routes = routes.slice(1);
            for (let x = 0; x < num; x++) {
@@ -161,10 +155,6 @@ function init() {
              let tmpObj={};
              //generate random id
              tmpObj.id=Math.ceil(Math.random()*1000000);
-             //make the individual route, within a certain hardcoded area around the origin point, by adding random distances to the origin
-             //tmpObj.polyline = [{}];
-             // tmpObj.polyline=MakeRoute(origin.lat+((Math.random()*0.002)-(Math.random()*0.001)),origin.lon+((Math.random()*0.002)-(Math.random()*0.001)));
-             //tmpObj.polyline[0] = {lat: origin.lat, lon: origin.lon};
              tmpObj.polyline = routes[x]; // this is replaced from dummy randomization with the real data, one geo point per route, name, province and country added into routes[{object}]
              // randomise activity
              tmpObj.activity=['cycling','running'][Math.floor(Math.random()*2)];
@@ -173,7 +163,6 @@ function init() {
              // add the temporary object to the localRouteArray (which this function will return) before iterating the process again
              localRouteArray.push(tmpObj);
            };
-           console.log('lrl '+localRouteArray.length); 
            for (xi=0;xi<localRouteArray.length;xi++) {
                console.log('testing success '+localRouteArray[xi]);
                console.log("generic test");
@@ -278,7 +267,8 @@ function init() {
        }
    
        // CODE EXECUTION
-   
+
+      
        let objCurrentUser=objUserRecord;
        let map = L.map('map').setView([0,0], 16);
    
