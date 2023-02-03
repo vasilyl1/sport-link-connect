@@ -21,6 +21,7 @@ function init() {
     passwordModalSignUpEl = document.querySelector('#password-signup');
     emailModalLoginEl = document.querySelector('#email-login');
     passwordModalLoginEl = document.querySelector('#password-login');
+    locationFieldEl = document.querySelector('#location-field');
 
     let objCurrentUser={};
 
@@ -63,10 +64,36 @@ function init() {
             // PopModal ("Updating!"+userActivityEl.value);
             objCurrentUser.lastActivityPref=userActivityEl.value;
             UpdateUserList(objCurrentUser);
+            if (locationFieldEl.value){
+                GeoByAddress(locationFieldEl.value);
+            }
         }
 
     }
 
+    let GeoByAddress = function (address) { // returns an object {lan,lat} the corresponding geo location point to the address requested, string is to be utf8 url encoded
+
+        let geoLoc = {lat:0, lon:0};
+        let TorontoDummy="10 Yonge Street, Toronto"
+        console.log("address"+address)
+    
+        fetch("https://secure.geonames.org/geoCodeAddressJSON?q=" + address + "&username=" + geonames.key)
+       
+        // Converting received data to JSON
+        .then(response => response.json())
+        .then(json => {
+           console.log(json);
+           geoLoc.lat = json.address.lat;
+           geoLoc.lon = json.address.lng
+           ClearMarkers();
+           GenerateRoutes(20,geoLoc,map);
+           
+           
+            });
+        return geoLoc;
+      
+    
+    };
 
 
     async function ProcessSignup(event) {
@@ -88,10 +115,12 @@ function init() {
         objTempUser.email = emailModalSignUpEl.value;
         console.log("modal email "+objTempUser.email);
         console.log("modal id "+objTempUser.id);
+        
         let x=await GetUserLocation();
         console.log('code advanced');
         console.log('outside of it'+x.lat+" "+x.lon);
         hideSignupModal();
+        objTempUser.inclPOIs=[];
         objTempUser.knownAddresses.push(x); //change this to GetAddressFromStreet function
         objTempUser.knownLocs.push(x);
         objCurrentUser = objTempUser;
@@ -112,8 +141,9 @@ function init() {
         if (found) {
             objCurrentUser=found;
             console.log("current user set to "+objCurrentUser.name);
-            PopModal (`Welcome, ${objCurrentUser.name}.`);
-            GenerateRoutes(20,objCurrentUser.knownLocs[0]);
+            // PopModal (`Welcome, ${objCurrentUser.name}.`);
+            if (objCurrentUser.name='Avery') {GenerateRoutes(20,{lat:44.1628,lon:-77.3832});} else {
+            GenerateRoutes(20,objCurrentUser.knownLocs[0]);}
         } else {
             PopModal("User not found!");
         }

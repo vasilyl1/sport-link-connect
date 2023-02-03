@@ -82,24 +82,7 @@ let getAthleteGPX = function (id, route) { //id = identifier of the athlete, rou
     return GPX;
 };
 
-let GeoByAddress = function (address) { // returns an object {lan,lat} the corresponding geo location point to the address requested, string is to be utf8 url encoded
 
-    let geoLoc = {lat:0, lng:0};
-
-    fetch("https://secure.geonames.org/geoCodeAddressJSON?q=" + address + "&username=" + geonames.key)
-   
-    // Converting received data to JSON
-    .then(response => response.json())
-    .then(json => {
-  
-       geoLoc.lat = json.address.lat;
-       geoLoc.lng = json.address.lng
-       
-        });
-    return geoLoc;
-  
-
-};
 
 
 
