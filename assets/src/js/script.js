@@ -160,6 +160,7 @@ function init() {
         if (found) {
             objCurrentUser=found;
             console.log("current user set to "+objCurrentUser.name);
+            PopModal("Welcome, "+objCurrentUser.name+"!");
             // GenerateRoute;s(20,objCurrentUser.knownLocs[0]);
             ClearMarkers();
             GetUserLocation()
