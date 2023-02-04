@@ -9,8 +9,14 @@ SportLink Connect is a web application which aims to match lonely athletes to ea
 
 click the link [here](https://tegrty.github.io/Sport-Link-Connect/), sign-up at the top of the page, login, type in your desired location to connect and double click your favourite points of interest. If another athlete were to login, they would be able to view the previous members locations and would be prompted to connect (this function is to be added in a future update).
 
-To use Advanced CSS Project, you can review the notes in each section. 
 ![image](/assets/img/Readme-gif.gif)
+
+## Technology used:
+
+* HTML/CSS/Javascript
+* Bootstrap & Tailwind
+* Geonames API
+* OpenStreetMap API
 
 ---
 ## Special thanks!!
