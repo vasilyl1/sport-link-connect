@@ -18,5 +18,5 @@ To use Advanced CSS Project, you can review the notes in each section.
 Contributors to this project include:
 
 * [Taddeo Costanzo](https://github.com/tadcos29)
-* [Vasily](https://github.com/vasilyl1)
+* [Vasily Likhovaydo](https://github.com/vasilyl1)
 
