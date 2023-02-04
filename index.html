@@ -42,6 +42,20 @@
           </div>
      </nav>
 
+     <!-- Alert Modal -->
+     <div id="AlertModal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center hidden z-50">
+          <div class="bg-white p-6 rounded-lg shadow-xl">
+               <h2 class="text-lg font-medium mb-4">Alert</h2>
+               <p id="alertMessage" class="text-gray-700 font-medium mb-2">
+                    <!-- This is where the alert message will be displayed -->
+                    Alert
+               </p>
+               <button onclick="hideAlertModal()" class="text-gray-600 font-medium">
+                    Close
+               </button>
+          </div>
+     </div>
+
      <!-- The login modal -->
      <div id="loginModal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center hidden z-50">
           <div class="bg-white p-6 rounded-lg shadow-xl">
@@ -119,6 +133,20 @@
 
      <!-- JavaScript to show and hide the modal -->
      <script>
+
+function showAlertModal() {
+               document.getElementById("AlertModal").classList.remove("hidden");
+               document.getElementById("AlertModal-background").classList.remove("hidden");
+               document.getElementById("AlertModal-background").classList.add("opacity-75");
+               document.getElementById("map").classList.add("hidden");
+          }
+          function hideAlertModal() {
+               document.getElementById("AlertModal").classList.add("hidden");
+               document.getElementById("AlertModal-background").classList.remove("opacity-75");
+               document.getElementById("AlertModal-background").classList.add("hidden");
+               document.getElementById("map").classList.remove("hidden");
+          }
+
           function showLoginModal() {
                document.getElementById("loginModal").classList.remove("hidden");
                document.getElementById("loginModal-background").classList.remove("hidden");
@@ -185,7 +213,7 @@
 
 
           <section>
-               <h2>You've made a link!</h2>
+               <h2>Double-click points of interest to favourite and connect!</h2>
                <ul>
              
                </ul>
