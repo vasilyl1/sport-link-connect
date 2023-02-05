@@ -515,6 +515,8 @@ function init() {
     buttonClose.addEventListener("click", hideAlertModal); // adds listener when close button clicked
     buttonClose1.addEventListener("click", hideLoginModal); // adds listener when close button clicked
     buttonClose2.addEventListener("click", hideSignupModal); // adds listener when close button clicked
+    document.getElementById("loginModal-background").addEventListener("click",hideLoginModal); // The background that becomes darker and blurred when the modal is shown
+    document.getElementById("signupModal-background").addEventListener("click",hideSignupModal); // The background that becomes darker and blurred when the modal is shown
     loginModalSubmitBtnEl.addEventListener('click', ProcessLogin);
     userFormEl.addEventListener('submit', ProcessFormGroup);
 
