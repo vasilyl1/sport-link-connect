@@ -79,3 +79,9 @@ h2 {
 p {
     font-family: 'Anek Devanagari', sans-serif;
 }
+
+.leaflet-popup-content-wrapper:hover {
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
