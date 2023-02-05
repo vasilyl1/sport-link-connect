@@ -1,8 +1,6 @@
-
 // Redirect the user to GET https://www.strava.com/oauth/authorize
 
 /*
-
 fetch(url, {options})
 .then(data => {
     // Do some stuff here
@@ -10,9 +8,7 @@ fetch(url, {options})
 .catch(err => {
     // Catch and display errors
 })
-
 // GET
-
 fetch("https://jsonplaceholder.typicode.com/users")
    
     // Converting received data to JSON
@@ -33,9 +29,7 @@ fetch("https://jsonplaceholder.typicode.com/users")
     // Display result
     document.getElementById("users").innerHTML = li;
 });
-
 // POST
-
 fetch("https://jsonplaceholder.typicode.com/posts", {
      
     // Adding method type
@@ -59,7 +53,6 @@ fetch("https://jsonplaceholder.typicode.com/posts", {
  
 // Displaying results to console
 .then(json => console.log(json));
-
 */
 
 /*let geonames = {
@@ -82,24 +75,6 @@ let getAthleteGPX = function (id, route) { //id = identifier of the athlete, rou
     return GPX;
 };
 
-let GeoByAddress = function (address) { // returns an object {lan,lat} the corresponding geo location point to the address requested, string is to be utf8 url encoded
-
-    let geoLoc = {lat:0, lng:0};
-
-    fetch("https://secure.geonames.org/geoCodeAddressJSON?q=" + address + "&username=" + geonames.key)
-   
-    // Converting received data to JSON
-    .then(response => response.json())
-    .then(json => {
-  
-       geoLoc.lat = json.address.lat;
-       geoLoc.lng = json.address.lng
-       
-        });
-    return geoLoc;
-  
-
-};
 
 
 
