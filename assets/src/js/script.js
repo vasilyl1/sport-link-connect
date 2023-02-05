@@ -26,7 +26,9 @@ function init() {
     locationFieldEl = document.querySelector('#location-field');
     buttonSignup = document.querySelector("#signup"); // signup button
     buttonLogin = document.querySelector("#login"); // login button
-    buttonClose = document.querySelector("#close"); // close button
+    buttonClose = document.querySelector("#close"); // close button for the alert
+    buttonClose1 = document.querySelector("#close1"); // close button for the login modal
+    buttonClose2 = document.querySelector("#close2"); // close button for the signup modal
 
     let objCurrentUser = {};
 
@@ -503,16 +505,16 @@ function init() {
         document.getElementById("map").classList.remove("hidden");
     }
 
-    // CODE EXECUTION
+    // LISTENERS
 
     objCurrentUser = objUserRecord;
     let map;
     signupModalSubmitBtnEl.addEventListener('click', ProcessSignup);
-    // signupBtnEl.addEventListener('click', ProcessSignup);
-    // loginBtnEl.addEventListener('click', ProcessLogin);
     buttonSignup.addEventListener("click", showSignupModal); // adds listener when signup button clicked
     buttonLogin.addEventListener("click", showLoginModal); // adds listener when login button clicked
     buttonClose.addEventListener("click", hideAlertModal); // adds listener when close button clicked
+    buttonClose1.addEventListener("click", hideLoginModal); // adds listener when close button clicked
+    buttonClose2.addEventListener("click", hideSignupModal); // adds listener when close button clicked
     loginModalSubmitBtnEl.addEventListener('click', ProcessLogin);
     userFormEl.addEventListener('submit', ProcessFormGroup);
 
