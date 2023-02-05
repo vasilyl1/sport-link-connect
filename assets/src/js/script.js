@@ -12,6 +12,8 @@ function init() {
     submiBtnEl = document.querySelector('#submitBtn');
     userFormEl= document.querySelector('#form-area');
 
+    alertMessageEl= document.querySelector('#alertMessage');
+
     signupModalSubmitBtnEl = document.querySelector('#signupSubmit');
 
     loginModalSubmitBtnEl = document.querySelector('#loginSubmit');
@@ -21,6 +23,7 @@ function init() {
     passwordModalSignUpEl = document.querySelector('#password-signup');
     emailModalLoginEl = document.querySelector('#email-login');
     passwordModalLoginEl = document.querySelector('#password-login');
+    locationFieldEl = document.querySelector('#location-field');
 
     let objCurrentUser={};
 
@@ -38,12 +41,16 @@ function init() {
         lon:0
     }
 
+    // Definition of point-of-interest object
+
     const objPOIRecord = {
         id:0,
-        name:'', // possibly
+        name:'', 
         coords: {lat:0,lon:0}, // a single objCoord
         type:'' // type of POI - portage, trail, etc.
     }
+
+    // Definition of object user record
 
     const objUserRecord = {
         name :'',
@@ -54,19 +61,46 @@ function init() {
         lastActivityPref:''
     }
 
+    // processing for location/activity submission
+
     function ProcessFormGroup(event) {
         event.preventDefault();
-        console.log(event.this);
         if (!objCurrentUser.id) {
+            
             PopModal("Please sign in or sign up first!")
         } else {
-            // PopModal ("Updating!"+userActivityEl.value);
             objCurrentUser.lastActivityPref=userActivityEl.value;
             UpdateUserList(objCurrentUser);
+            if (locationFieldEl.value){
+                GeoByAddress(locationFieldEl.value);
+                
+            }
         }
 
     }
 
+    let GeoByAddress = function (address) { // returns an object {lan,lat} the corresponding geo location point to the address requested, string is to be utf8 url encoded
+
+        let geoLoc = {lat:0, lon:0};
+        processedAddress=address.replace(/\s/g, '+');
+        console.log(processedAddress);
+        fetch("https://nominatim.openstreetmap.org/?addressdetails=1&q="+processedAddress+"&format=json&limit=1")
+        // Converting received data to JSON
+        .then(response => response.json())
+        .then(json => {
+           console.log(json);
+           geoLoc.lat = json[0].lat;
+           geoLoc.lon = json[0].lon;
+           objCurrentUser.knownLocs[0]={lat:geoLoc.lat,lon:geoLoc.lon};
+           ClearMarkers();
+           GenerateRoutes(20,objCurrentUser.knownLocs[0]);
+           
+           
+            });
+        return geoLoc;
+      
+    
+    };
 
 
     async function ProcessSignup(event) {
@@ -74,7 +108,7 @@ function init() {
         event.preventDefault();
         ClearMarkers();
         console.log("hit signup");
-        
+        let checkedLoc;
          objCurrentUser=objUserRecord;
         let objTempUser=objUserRecord;
         // alert("SIGN UP!"+event.target.getAttribute('id'));
@@ -88,22 +122,36 @@ function init() {
         objTempUser.email = emailModalSignUpEl.value;
         console.log("modal email "+objTempUser.email);
         console.log("modal id "+objTempUser.id);
-        let x=await GetUserLocation();
+        
+        GetUserLocation()
+        .then((position) => {
+            console.log("gotposition"+position);
+            checkedLoc={lat:position.coords.latitude, lon:position.coords.longitude};
+            objTempUser.inclPOIs=[];
+            objTempUser.knownLocs[0]=checkedLoc;
+            objCurrentUser = objTempUser;
+            UpdateUserList(objCurrentUser);
+            GenerateRoutes(20,objCurrentUser.knownLocs[0]);
+          })
+          .catch((err) => {
+            console.error(err.message);
+            checkedLoc={lat:43.6532,lon:-79.3832};
+            objTempUser.inclPOIs=[];
+            objTempUser.knownLocs[0]=checkedLoc;
+            objCurrentUser = objTempUser;
+            UpdateUserList(objCurrentUser);
+            GenerateRoutes(20,objCurrentUser.knownLocs[0]);
+          });
         console.log('code advanced');
         console.log('outside of it'+x.lat+" "+x.lon);
         hideSignupModal();
-        objTempUser.knownAddresses.push(x); //change this to GetAddressFromStreet function
-        objTempUser.knownLocs.push(x);
-        objCurrentUser = objTempUser;
-        UpdateUserList(objCurrentUser);
-        GenerateRoutes(20,objCurrentUser.knownLocs[0]);
+       
     }
 
     function ProcessLogin(event) {
         event.preventDefault();
-        objCurrentUser={};
-        objCurrentUser=objUserRecord;
-        ClearMarkers();
+        // objCurrentUser={};
+        // objCurrentUser=objUserRecord;
         let tmpEmail=emailModalLoginEl.value;
         let tmpPass=passwordModalLoginEl.value;
         let found=UserFound(tmpEmail,tmpPass);
@@ -112,8 +160,24 @@ function init() {
         if (found) {
             objCurrentUser=found;
             console.log("current user set to "+objCurrentUser.name);
-            PopModal (`Welcome, ${objCurrentUser.name}.`);
+            PopModal("Welcome, "+objCurrentUser.name+"!");
+            // GenerateRoute;s(20,objCurrentUser.knownLocs[0]);
+            ClearMarkers();
+            GetUserLocation()
+           .then((position) => {
+            console.log("gotposition"+position);
+            checkedLoc={lat:position.coords.latitude, lon:position.coords.longitude};
+            objCurrentUser.knownLocs[0]=checkedLoc;
+                    // UpdateUserList(objCurrentUser);
             GenerateRoutes(20,objCurrentUser.knownLocs[0]);
+          })
+          .catch((err) => {
+            console.error(err.message);
+            checkedLoc={lat:43.6532,lon:-79.3832}
+            objCurrentUser.knownLocs[0]=checkedLoc;
+            // UpdateUserList(objCurrentUser);
+            GenerateRoutes(20,objCurrentUser.knownLocs[0]);
+          });
         } else {
             PopModal("User not found!");
         }
@@ -125,7 +189,8 @@ function init() {
         // num is the number of routes we are asking to generate
         // origin is the origin point (lat, lon object) around which the routes will be generated
     
-        
+        localRouteArray=[];
+        ClearMarkers();
         let routes = [{}];
     
         // fetching the data for the trails
@@ -225,13 +290,24 @@ function init() {
             
             let rPoiNAME = markerSelected.getContent()
             let poiNAME = rPoiNAME.split('<')[0];
+            if ([poiNAME]==='') {rPoiNAME=poiNAME}
+            // let favesString=CheckFavourites(poiNAME);
+            // console.log("favesstring "+favesString);
+            // if (favesString) {favesString=`(${favesString})`}
             console.log("popupyielded "+poiNAME);
             console.log("also-user "+objCurrentUser);
             for (y=0;y<objCurrentUser.inclPOIs.length;y++) {
                 console.log("bindingnew "+objCurrentUser.inclPOIs[y].polyline.name+" here");
                 // let favesString=CheckFavourites(poiNAME);
                 // console.log("favesstring "+favesString);
-                if (poiNAME===objCurrentUser.inclPOIs[y].polyline.name) {markers[x].bindPopup(poiNAME+"<br><b>Favourited!</b>");}
+                // if (favesString!='') {favesString=`<br>(${favesString})`}
+                if (poiNAME===objCurrentUser.inclPOIs[y].name) {
+                    markers[x].bindPopup(poiNAME+"<br><b>Favourited!</b>");
+                    // let favesString=CheckFavourites(poiNAME);
+                     // console.log("favesstring "+favesString);
+                     // if (favesString!='') {favesString=`<br>(${favesString})`}
+                     // re these three
+                    }
             }
         }
 
@@ -251,12 +327,27 @@ function init() {
       markerSelected=event.target.getPopup();
       let rPoiNAME = markerSelected.getContent()
       let poiNAME = rPoiNAME.split('<')[0];
+      if ([poiNAME]==='') {rPoiNAME=poiNAME}
+        console.log("poiName in click is"+poiNAME);
+      let favesString=CheckFavourites(poiNAME);
+        console.log("favesstring "+favesString);
+        if (favesString!='') {favesString=`<br>(${favesString})`}
+        //careful re these three
       for (x=0;x<localRouteArray.length;x++) {
         if (localRouteArray[x].polyline.name===poiNAME) {
+            if (checkPolys(poiNAME,objCurrentUser)) {
             objCurrentUser.inclPOIs.push(localRouteArray[x]);
-            event.target.bindPopup(localRouteArray[x].polyline.name+"<br><b>Favourited!</b>");
+            console.log("not already there");
+        }
+            event.target.bindPopup(localRouteArray[x].polyline.name+favesString+"<br><b>Favourited!</b>");
             event.target.openPopup();
         }
+      }
+      function checkPolys(featName, curUser) {
+        for (xk=0;xk<curUser.inclPOIs.length;xk++){
+            if (curUser.inclPOIs[xk].polyline.name===featName) {return false;}
+        }
+        return true;
       }
       UpdateUserList(objCurrentUser);
     }
@@ -267,7 +358,7 @@ function init() {
 
 
     function InitMap() {
-        if (!map) {map=L.map('map').setView([0,0], 16);}
+        if (!map) {map=L.map('map').setView([0,0], 17);}
         // Set the initial view of the map on the user's last location
         map.setView([objCurrentUser.knownLocs[0].lat, objCurrentUser.knownLocs[0].lon])
     userMapMarker=L.marker([objCurrentUser.knownLocs[0].lat, objCurrentUser.knownLocs[0].lon]).addTo(map);
@@ -330,15 +421,17 @@ function init() {
 
     function CheckFavourites(name) {
         objTemp=RetrieveUserList();
-        let tempString='';
+        console.log("cf name is"+name)
+        let tempUsers=[];
         for (x=0;x<objTemp.length;x++) {
             for (y=0;y<objTemp[x].inclPOIs.length;y++) {
-            if ((objTemp[x].inclPOIs[y].polyline.name===name) && (objTemp[x]!=objCurrentUser)) {
-                tempString=tempString+', '+objTemp[x].name;
+            if ((objTemp[x].inclPOIs[y].polyline.name===name) && (objTemp[x].id!=objCurrentUser.id)) {
+                tempUsers.push(objTemp[x].name);
+                console.log("found a favourite also: "+tempUsers.join(", "));
             }
                 }
             }
-            return tempString
+            return tempUsers.join(", ");
         }
 
     
@@ -347,7 +440,12 @@ function init() {
 
     // UTILITY FUNCTIONS
 
-    PopModal = (text) => alert(text);
+    PopModal = (text) => { 
+        alertMessageEl.innerHTML=text;
+        showAlertModal();
+        
+    
+    }
     AskModal = (text) => prompt(text);
 
     GenerateUniqueID = () => Math.ceil(Math.random()*1000000);
@@ -359,15 +457,11 @@ function init() {
     }
 
     function GetUserLocation() {
-        let p = new Promise(function (resolve,reject) {
+        return new Promise(function (glResolve,glReject) {
         navigator.geolocation.getCurrentPosition(glResolve, glReject);
-        function glResolve(pos) {
-        console.log("loc success inside"+pos.coords.latitude+pos.coords.longitude);
-        resolve(pos);}
-        function glReject() {reject({lat:43.6532,lon:-79.3832});}
+    
 
         })
-        return {lat:43.6532,lon:-79.3832}; // placeholder
     }
 
     // CODE EXECUTION
