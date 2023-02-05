@@ -33,12 +33,14 @@
           </div>
           <div id="navbar-buttons" class="flex items-center justify-end sm:justify-between">
                <a href="#connectSection" id="connect" class="text-white mr-6">Connect</a>
-               <button id="signup" class="bg-white text-black font-medium py-2 px-4 rounded-full mr-"
+               <!-- <button id="signup" class="bg-white text-black font-medium py-2 px-4 rounded-full mr-"
                     onclick="showSignupModal()">Sign up</button>
                <button id="login" class="bg-white text-black font-medium py-2 px-4 rounded-full"
                     onclick="showLoginModal()">
                     Login
-               </button>
+               </button> -->
+               <button id="signup" class="bg-white text-black font-medium py-2 px-4 rounded-full mr-">Sign up</button>
+               <button id="login" class="bg-white text-black font-medium py-2 px-4 rounded-full">Login</button>
           </div>
      </nav>
 
@@ -50,9 +52,10 @@
                     <!-- This is where the alert message will be displayed -->
                     Alert
                </p>
-               <button onclick="hideAlertModal()" class="text-gray-600 font-medium">
+               <!-- <button onclick="hideAlertModal()" class="text-gray-600 font-medium">
                     Close
-               </button>
+               </button> -->
+               <button id="close" class="text-gray-600 font-medium">Close</button>
           </div>
      </div>
 
@@ -131,51 +134,6 @@
      <div id="signupModal-background" class="fixed top-0 left-0 w-full h-full bg-black opacity-0 hidden"
           onclick="hideSignupModal()"></div>
 
-     <!-- JavaScript to show and hide the modal -->
-     <script>
-
-function showAlertModal() {
-               document.getElementById("AlertModal").classList.remove("hidden");
-               document.getElementById("AlertModal-background").classList.remove("hidden");
-               document.getElementById("AlertModal-background").classList.add("opacity-75");
-               document.getElementById("map").classList.add("hidden");
-          }
-          function hideAlertModal() {
-               document.getElementById("AlertModal").classList.add("hidden");
-               document.getElementById("AlertModal-background").classList.remove("opacity-75");
-               document.getElementById("AlertModal-background").classList.add("hidden");
-               document.getElementById("map").classList.remove("hidden");
-          }
-
-          function showLoginModal() {
-               document.getElementById("loginModal").classList.remove("hidden");
-               document.getElementById("loginModal-background").classList.remove("hidden");
-               document.getElementById("loginModal-background").classList.add("opacity-75");
-               document.getElementById("map").classList.add("hidden");
-          }
-
-          function hideLoginModal() {
-               document.getElementById("loginModal").classList.add("hidden");
-               document.getElementById("loginModal-background").classList.remove("opacity-75");
-               document.getElementById("loginModal-background").classList.add("hidden");
-               document.getElementById("map").classList.remove("hidden");
-          }
-
-          function showSignupModal() {
-               document.getElementById("signupModal").classList.remove("hidden");
-               document.getElementById("signupModal-background").classList.remove("hidden");
-               document.getElementById("signupModal-background").classList.add("opacity-75");
-               document.getElementById("map").classList.add("hidden");
-          }
-
-          function hideSignupModal() {
-               document.getElementById("signupModal").classList.add("hidden");
-               document.getElementById("signupModal-background").classList.remove("opacity-75");
-               document.getElementById("signupModal-background").classList.add("hidden");
-               document.getElementById("map").classList.remove("hidden");
-          }
-     </script>
-
 
      <section class="hero">
           <h1 id="title">ONE TEAM <br> ONE LINK</h1>
@@ -230,6 +188,5 @@ function showAlertModal() {
      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
      crossorigin=""></script>
 <script src="./assets/src/js/config.js"></script> <!-- configuration parameters for API, excluded from the GitHub -->
-<script src="./assets/src/js/apigeolocation.js"></script>
 <script src="./assets/src/js/script.js"></script>
 </html>
