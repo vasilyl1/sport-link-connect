@@ -29,8 +29,9 @@ function init() {
     buttonClose = document.querySelector("#close"); // close button for the alert
     buttonClose1 = document.querySelector("#close1"); // close button for the login modal
     buttonClose2 = document.querySelector("#close2"); // close button for the signup modal
+    favsList = document.querySelector("#favs"); // UL for display current user favs
 
-    let objCurrentUser = {};
+    let objCurrentUser = {}; // object with current user information
 
 
     let localRouteArray = [{}]; // array of local routes
@@ -88,12 +89,10 @@ function init() {
 
         let geoLoc = { lat: 0, lon: 0 };
         processedAddress = address.replace(/\s/g, '+');
-        console.log(processedAddress);
         fetch("https://nominatim.openstreetmap.org/?addressdetails=1&q=" + processedAddress + "&format=json&limit=1")
             // Converting received data to JSON
             .then(response => response.json())
             .then(json => {
-                console.log(json);
                 geoLoc.lat = json[0].lat;
                 geoLoc.lon = json[0].lon;
                 objCurrentUser.knownLocs[0] = { lat: geoLoc.lat, lon: geoLoc.lon };
@@ -108,47 +107,44 @@ function init() {
     };
 
 
-    async function ProcessSignup(event) {
+    function ProcessSignup(event) {
 
         event.preventDefault();
-        ClearMarkers();
-        console.log("hit signup");
-        let checkedLoc;
+        // console.log("hit signup");
+        // let checkedLoc;
         objCurrentUser = objUserRecord;
-        let objTempUser = objUserRecord;
+        // let objTempUser = objUserRecord;
         // alert("SIGN UP!"+event.target.getAttribute('id'));
-        objTempUser.name = nameModalSignupEl.value;
+        objCurrentUser.name = nameModalSignupEl.value;
         // alert("HI "+objTempUser.name);
-        console.log("modal name " + objTempUser.name);
-        objTempUser.id = GenerateUniqueID();
+        // console.log("modal name " + objTempUser.name);
+        objCurrentUser.id = GenerateUniqueID();
         // alert("YOUR UNIQUE ID IS "+objTempUser.id);
-        objTempUser.password = passwordModalSignUpEl.value;
-        console.log("modal password " + objTempUser.password);
-        objTempUser.email = emailModalSignUpEl.value;
-        console.log("modal email " + objTempUser.email);
-        console.log("modal id " + objTempUser.id);
+        objCurrentUser.password = passwordModalSignUpEl.value;
+        // console.log("modal password " + objTempUser.password);
+        objCurrentUser.email = emailModalSignUpEl.value;
+        // console.log("modal email " + objTempUser.email);
+        // console.log("modal id " + objTempUser.id);
+        objCurrentUser.inclPOIs = [];
 
+        PopModal("Welcome, " + objCurrentUser.name + "!");
+        renderFavs(objCurrentUser); // prints the list of favourite locations for current user
+        ClearMarkers();
         GetUserLocation()
             .then((position) => {
-                console.log("gotposition" + position);
-                checkedLoc = { lat: position.coords.latitude, lon: position.coords.longitude };
-                objTempUser.inclPOIs = [];
-                objTempUser.knownLocs[0] = checkedLoc;
-                objCurrentUser = objTempUser;
+                // console.log("gotposition" + position);
+                objCurrentUser.knownLocs[0] = { lat: position.coords.latitude, lon: position.coords.longitude };
                 UpdateUserList(objCurrentUser);
                 GenerateRoutes(20, objCurrentUser.knownLocs[0]);
             })
             .catch((err) => {
-                console.error(err.message);
-                checkedLoc = { lat: 43.6532, lon: -79.3832 };
-                objTempUser.inclPOIs = [];
-                objTempUser.knownLocs[0] = checkedLoc;
-                objCurrentUser = objTempUser;
+                // console.error(err.message);
+                objCurrentUser.knownLocs[0] = { lat: 43.6532, lon: -79.3832 };
                 UpdateUserList(objCurrentUser);
                 GenerateRoutes(20, objCurrentUser.knownLocs[0]);
             });
-        console.log('code advanced');
-        console.log('outside of it' + x.lat + " " + x.lon);
+        // console.log('code advanced');
+        // console.log('outside of it' + x.lat + " " + x.lon);
         hideSignupModal();
 
     }
@@ -161,24 +157,22 @@ function init() {
         let tmpPass = passwordModalLoginEl.value;
         let found = UserFound(tmpEmail, tmpPass);
         hideLoginModal();
-        console.log(found);
         if (found) {
-            objCurrentUser = found;
-            console.log("current user set to " + objCurrentUser.name);
+            objCurrentUser = found; // current user name - objCurrentUser
             PopModal("Welcome, " + objCurrentUser.name + "!");
+            renderFavs(objCurrentUser); // prints the list of favourite locations for current user
             // GenerateRoute;s(20,objCurrentUser.knownLocs[0]);
             ClearMarkers();
             GetUserLocation()
-                .then((position) => {
-                    console.log("gotposition" + position);
+                .then((position) => { // obtains user geoposition once allowed in browser
                     checkedLoc = { lat: position.coords.latitude, lon: position.coords.longitude };
                     objCurrentUser.knownLocs[0] = checkedLoc;
                     // UpdateUserList(objCurrentUser);
                     GenerateRoutes(20, objCurrentUser.knownLocs[0]);
                 })
-                .catch((err) => {
-                    console.error(err.message);
-                    checkedLoc = { lat: 43.6532, lon: -79.3832 }
+                .catch((err) => { // if geoloc is not allowed by the browser
+                    // console.error(err.message);
+                    checkedLoc = { lat: 43.6532, lon: -79.3832 } // sets Toronto downtown
                     objCurrentUser.knownLocs[0] = checkedLoc;
                     // UpdateUserList(objCurrentUser);
                     GenerateRoutes(20, objCurrentUser.knownLocs[0]);
@@ -190,7 +184,7 @@ function init() {
     }
 
 
-    let GenerateRoutes = function (num, origin, map) {
+    let GenerateRoutes = function (num, origin) {
         // num is the number of routes we are asking to generate
         // origin is the origin point (lat, lon object) around which the routes will be generated
 
@@ -226,7 +220,7 @@ function init() {
                     };
 
                 };
-        
+
 
                 //
                 routes = routes.slice(1);
@@ -248,7 +242,7 @@ function init() {
                     localRouteArray.push(tmpObj);
                 };
 
-
+                localRouteArray = localRouteArray.slice(1);
                 InitMap();
                 PopulateRoutes(localRouteArray);
 
@@ -258,14 +252,11 @@ function init() {
 
             });
 
-
-        localRouteArray = localRouteArray.slice(1);
         return localRouteArray;
     };
 
     function PopulateRoutes(objRoute) {
         for (xi = 0; xi < objRoute.length; xi++) {
-            console.log(objRoute.length);
             mapMarkers[xi] = L.marker([objRoute[xi].polyline.lat, objRoute[xi].polyline.lon]).addTo(map).on('dblclick', ProcessMarkerClick);
             // let otherFaves=CheckFavourites(objRoute[xi].polyline.name);
             // console.log(otherFaves);
@@ -281,29 +272,15 @@ function init() {
     }
 
     function InitFavourites(markers) {
-        console.log("init-favs" + markers.length);
         for (x = 0; x < markers.length; x++) {
             markerSelected = markers[x].getPopup();
 
             let rPoiNAME = markerSelected.getContent()
             let poiNAME = rPoiNAME.split('<')[0];
             if ([poiNAME] === '') { rPoiNAME = poiNAME }
-            // let favesString=CheckFavourites(poiNAME);
-            // console.log("favesstring "+favesString);
-            // if (favesString) {favesString=`(${favesString})`}
-            console.log("popupyielded " + poiNAME);
-            console.log("also-user " + objCurrentUser);
             for (y = 0; y < objCurrentUser.inclPOIs.length; y++) {
-                console.log("bindingnew " + objCurrentUser.inclPOIs[y].polyline.name + " here");
-                // let favesString=CheckFavourites(poiNAME);
-                // console.log("favesstring "+favesString);
-                // if (favesString!='') {favesString=`<br>(${favesString})`}
-                if (poiNAME === objCurrentUser.inclPOIs[y].name) {
+                if (poiNAME === objCurrentUser.inclPOIs[y].polyline.name) {
                     markers[x].bindPopup(poiNAME + "<br><b>Favourited!</b>");
-                    // let favesString=CheckFavourites(poiNAME);
-                    // console.log("favesstring "+favesString);
-                    // if (favesString!='') {favesString=`<br>(${favesString})`}
-                    // re these three
                 }
             }
         }
@@ -320,31 +297,46 @@ function init() {
         mapMarkers.length = 0;
     }
 
-    function ProcessMarkerClick(event) {
-        markerSelected = event.target.getPopup();
-        let rPoiNAME = markerSelected.getContent()
+    function ProcessMarkerClick(event) { // runs when dblclicked on map marker
+        markerSelected = event.target.getPopup(); // display the label
+        let rPoiNAME = markerSelected.getContent(); // getting text from the label
         let poiNAME = rPoiNAME.split('<')[0];
-        if ([poiNAME] === '') { rPoiNAME = poiNAME }
-        console.log("poiName in click is" + poiNAME);
-        let favesString = CheckFavourites(poiNAME);
-        console.log("favesstring " + favesString);
+        if ([poiNAME] === '') { rPoiNAME = poiNAME };
+        let favesString = CheckFavourites(poiNAME); // checks if the name of park is in favs of any other users, returns string of all users
+        let favesString1 = favesString;
         if (favesString != '') { favesString = `<br>(${favesString})` }
-        //careful re these three
+        //
         for (x = 0; x < localRouteArray.length; x++) {
             if (localRouteArray[x].polyline.name === poiNAME) {
-                if (checkPolys(poiNAME, objCurrentUser)) {
+                let favPosition = checkPolys(poiNAME, objCurrentUser); // position of fav in objCurrentUser.inclPOIs
+                if (favPosition === -1) { // if user DOES NOT have fav
                     objCurrentUser.inclPOIs.push(localRouteArray[x]);
-                    console.log("not already there");
+                    let li = document.createElement("li");
+                    if (favesString != "") { // print also who else is favourited that park
+                        li.textContent = poiNAME + " - also favourited by: " + favesString1;
+                    } else {
+                        li.textContent = poiNAME;
+                    }
+                    favsList.appendChild(li); // appends current user fav list to display
+                    event.target.bindPopup(localRouteArray[x].polyline.name + favesString + "<br><b>Favourited!</b>"); // set the label
+                } else { // if user has this fav - remove
+                    objCurrentUser.inclPOIs.splice(favPosition, 1); // removes 1 element at favPosition
+                    for (let i = 0; i < favsList.children.length; i++) { // remove item from displayed list of favs
+                        if (favsList.children[i].textContent.includes(poiNAME)) {
+                            favsList.children[i].remove(); // remove 1 element at i position
+                        }
+                    }
+                    event.target.bindPopup(localRouteArray[x].polyline.name); // set the label w/o favourite
                 }
-                event.target.bindPopup(localRouteArray[x].polyline.name + favesString + "<br><b>Favourited!</b>");
+
                 event.target.openPopup();
             }
         }
-        function checkPolys(featName, curUser) {
-            for (xk = 0; xk < curUser.inclPOIs.length; xk++) {
-                if (curUser.inclPOIs[xk].polyline.name === featName) { return false; }
+        function checkPolys(featName, curUser) { // returns -1 if current user does not have featName in fav
+            for (let xk = 0; xk < curUser.inclPOIs.length; xk++) {
+                if (curUser.inclPOIs[xk].polyline.name === featName) { return xk; }
             }
-            return true;
+            return -1;
         }
         UpdateUserList(objCurrentUser);
     }
@@ -366,7 +358,7 @@ function init() {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
         if (objCurrentUser.lastActivityPref) {
-            console.log("yielded " + objCurrentUser.lastActivityPref)
+            // console.log("yielded " + objCurrentUser.lastActivityPref)
             userActivityEl.value = objCurrentUser.lastActivityPref;
         }
     }
@@ -384,7 +376,7 @@ function init() {
 
     function UpdateUserList(objCurrentUser) { // retreives the user list from local storage, updates the current user fields, writes the data back
         let objTmpUserList = RetrieveUserList();
-        for (x = 0; x < objTmpUserList.length; x++) {
+        for (let x = 0; x < objTmpUserList.length; x++) {
             if (objTmpUserList[x].id === objCurrentUser.id) {
                 objTmpUserList[x] = objCurrentUser;
                 WriteUserList(objTmpUserList);
@@ -416,15 +408,13 @@ function init() {
         return false;
     }
 
-    function CheckFavourites(name) {
+    function CheckFavourites(name) { // checks if other users also fav'ed name, returns name and id of user
         objTemp = RetrieveUserList();
-        console.log("cf name is" + name)
         let tempUsers = [];
         for (x = 0; x < objTemp.length; x++) {
             for (y = 0; y < objTemp[x].inclPOIs.length; y++) {
                 if ((objTemp[x].inclPOIs[y].polyline.name === name) && (objTemp[x].id != objCurrentUser.id)) {
                     tempUsers.push(objTemp[x].name);
-                    console.log("found a favourite also: " + tempUsers.join(", "));
                 }
             }
         }
@@ -461,6 +451,25 @@ function init() {
         })
     }
 
+
+    let renderFavs = function (user) { // renders current user favourites in a UL items 
+
+        if (favsList.children.length > 0) { // clear any existing list items
+            for (let i = 0; i < favsList.children.length; i++) {
+                favsList.children[i].remove();
+            }
+        }
+        for (let i = 0; i < user.inclPOIs.length; i++) { // add existin favs from storage
+            let li = document.createElement("li");
+            let favStr = CheckFavourites(user.inclPOIs[i].polyline.name); // check if other users faved that location
+            if (favStr != "") {
+                li.textContent = user.inclPOIs[i].polyline.name + " - also favourited by: " + favStr;
+            } else {
+                li.textContent = user.inclPOIs[i].polyline.name;
+            }
+            favsList.appendChild(li);
+        }
+    }
 
     // show and hide the modal
 
@@ -515,8 +524,8 @@ function init() {
     buttonClose.addEventListener("click", hideAlertModal); // adds listener when close button clicked
     buttonClose1.addEventListener("click", hideLoginModal); // adds listener when close button clicked
     buttonClose2.addEventListener("click", hideSignupModal); // adds listener when close button clicked
-    document.getElementById("loginModal-background").addEventListener("click",hideLoginModal); // The background that becomes darker and blurred when the modal is shown
-    document.getElementById("signupModal-background").addEventListener("click",hideSignupModal); // The background that becomes darker and blurred when the modal is shown
+    document.getElementById("loginModal-background").addEventListener("click", hideLoginModal); // The background that becomes darker and blurred when the modal is shown
+    document.getElementById("signupModal-background").addEventListener("click", hideSignupModal); // The background that becomes darker and blurred when the modal is shown
     loginModalSubmitBtnEl.addEventListener('click', ProcessLogin);
     userFormEl.addEventListener('submit', ProcessFormGroup);
 
